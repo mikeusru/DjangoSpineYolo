@@ -8,6 +8,12 @@ verify_ssl = true
 [packages]
 django = "*"
 djangorestframework = "*"
+numpy = "*"
+keras = "*"
+pillow = "*"
+scikit-image = "*"
+tensorflow = "*"
+pusher = "*"
 
 [requires]
 python_version = "3.6"
