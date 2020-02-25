@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'dsy.apps.DsyConfig',
+    'rest_framework',
+    'spineyolo',
 ]
 
 MIDDLEWARE = [
