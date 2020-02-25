@@ -60,19 +60,14 @@ class SpineDetector(Thread):
         self.scale = scale
 
     def _load_anchors(self):
-        anchors_path = os.path.expanduser(self.anchors_path)
-        with open(anchors_path) as f:
-            anchors = f.readline()
-        anchors = [float(x) for x in anchors.split(',')]
+        anchors_str = self.anchors_path.read_text()
+        anchors = [float(x) for x in anchors_str.split(',')]
         return np.array(anchors).reshape(-1, 2)
 
     def _load_model(self):
-        json_file = open(os.path.join(self.model_path), 'r')
-        loaded_model_from_json = json_file.read()
-        json_file.close()
-        loaded_model = model_from_json(loaded_model_from_json)
-        loaded_model.load_weights(self.weights_path)
-        print('loaded model: {}\n loaded weights: {}'.format(self.model_path, self.weights_path))
+        loaded_model = model_from_json(self.model_path.read_text())
+        loaded_model.load_weights(self.weights_path.as_posix())
+        print('loaded model: {}\n loaded weights: {}'.format(self.model_path.as_posix(), self.weights_path.as_posix()))
         return loaded_model
 
     def _generate_output_tensors(self):
