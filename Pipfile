@@ -9,11 +9,11 @@ verify_ssl = true
 django = "*"
 djangorestframework = "*"
 numpy = "*"
-keras = "*"
 pillow = "*"
 scikit-image = "*"
-tensorflow = "*"
+tensorflow = "==1.6.0"
 pusher = "*"
+keras = "==2.2.5"
 
 [requires]
 python_version = "3.6"

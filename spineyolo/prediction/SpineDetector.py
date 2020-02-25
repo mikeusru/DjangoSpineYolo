@@ -20,7 +20,7 @@ class PusherPlaceholder():
 
 class SpineDetector(Thread):
     def __init__(self, model_path, weights_path):
-        Thread.__init__(self)
+        super().__init__()
         self.anchors_path = model_path / Path('yolo_anchors.txt')
         self.model_path = model_path / Path('model.json')
         self.weights_path = weights_path / Path('weights.h5')
@@ -65,7 +65,8 @@ class SpineDetector(Thread):
         return np.array(anchors).reshape(-1, 2)
 
     def _load_model(self):
-        loaded_model = model_from_json(self.model_path.read_text())
+        model_text = self.model_path.read_text()
+        loaded_model = model_from_json(model_text)
         loaded_model.load_weights(self.weights_path.as_posix())
         print('loaded model: {}\n loaded weights: {}'.format(self.model_path.as_posix(), self.weights_path.as_posix()))
         return loaded_model
