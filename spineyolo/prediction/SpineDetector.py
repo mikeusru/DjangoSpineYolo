@@ -1,5 +1,6 @@
 import os
 import time
+from pathlib import Path
 from threading import Thread
 from queue import Queue
 import numpy as np
@@ -18,11 +19,11 @@ class PusherPlaceholder():
 
 
 class SpineDetector(Thread):
-    def __init__(self):
+    def __init__(self, model_path, weights_path):
         Thread.__init__(self)
-        self.anchors_path = os.path.join('model_data', 'yolo_anchors.txt')
-        self.model_path = os.path.join('model_data', 'model.json')
-        self.weights_path = os.path.join('model_data', 'weights.h5')
+        self.anchors_path = model_path / Path('yolo_anchors.txt')
+        self.model_path = model_path / Path('model.json')
+        self.weights_path = weights_path / Path('weights.h5')
         self.class_names = ['Spine']
         self.score_threshold = 0.3
         self.iou_threshold = 0.45

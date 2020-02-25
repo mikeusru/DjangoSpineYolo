@@ -15,7 +15,6 @@ def load_pusher_info():
 
 
 class SpineyoloConfig(AppConfig):
-    print("\n\n\n\nHERE WE ARE \n\n\n\n")
     name = 'spineyolo'
     MODEL_PATH = Path("spineyolo/model")
     WEIGHTS_PATH = MODEL_PATH / Path("weights")
@@ -23,10 +22,10 @@ class SpineyoloConfig(AppConfig):
     print(MODEL_PATH.absolute())
     print(WEIGHTS_PATH.absolute())
     print(STATIC_ROOT.absolute())
-    # predictor = "test_prediction"
-    predictor = SpineDetector()
-    predictor.set_root_dir(STATIC_ROOT)
-    predictor.start()
+    predictor = "test_prediction"
+    # predictor = SpineDetector(MODEL_PATH, WEIGHTS_PATH)
+    # predictor.set_root_dir(STATIC_ROOT)
+    # predictor.start()
 
     pusher_dict = load_pusher_info()
     pusher = Pusher(
