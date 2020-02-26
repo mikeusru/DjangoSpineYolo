@@ -9,7 +9,7 @@ from spineyolo.prediction.SpineDetector import SpineDetector
 class MLTests(TestCase):
     def test_spineyolo_algorithm(self):
         input_data = {
-            "image_path": 'static/test/test_spines.jpg',
+            "image_path": 'static/tests/test_spines.jpg',
             "scale": 15,
         }
         MODEL_PATH = Path("spineyolo/model")
@@ -25,4 +25,4 @@ class MLTests(TestCase):
         while u_id not in predictor.analyzed_spines.keys():
             continue
         results = predictor.analyzed_spines[u_id].tolist()
-        self.assertEqual(len(results), 5)
+        self.assertTrue(1 < len(results) < 10)
