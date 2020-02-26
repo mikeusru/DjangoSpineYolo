@@ -19,7 +19,7 @@ class PusherPlaceholder():
 
 
 class SpineDetector(Thread):
-    def __init__(self, model_path, weights_path):
+    def __init__(self, model_path, weights_path, static_path):
         super().__init__()
         self.anchors_path = model_path / Path('yolo_anchors.txt')
         self.model_path = model_path / Path('model.json')
@@ -42,6 +42,8 @@ class SpineDetector(Thread):
         self.original_image_size = ''
         self.analyzed_spines = {}
         self.local = True
+        self.set_root_dir(static_path.as_posix())
+        self.start()
 
     def set_local(self, local=True):
         self.local = local
