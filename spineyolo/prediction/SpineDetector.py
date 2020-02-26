@@ -55,9 +55,9 @@ class SpineDetector(Thread):
     def set_root_dir(self, root_dir):
         self.root_dir = root_dir
 
-    def set_inputs(self, image_path, scale):
-        self.image_path = image_path
-        self.scale = scale
+    def set_inputs(self, input_data):
+        self.image_path = input_data["image_path"]
+        self.scale = input_data["scale"]
 
     def _load_anchors(self):
         anchors_str = self.anchors_path.read_text()
