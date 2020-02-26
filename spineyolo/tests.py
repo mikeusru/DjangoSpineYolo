@@ -17,9 +17,7 @@ class MLTests(TestCase):
             "image_path": 'static/tests/test_spines.jpg',
             "scale": 15,
         }
-        predictor = SpineDetector(MODEL_PATH, WEIGHTS_PATH)
-        predictor.set_root_dir(STATIC_ROOT.as_posix())
-        predictor.start()
+        predictor = SpineDetector(MODEL_PATH, WEIGHTS_PATH, STATIC_ROOT)
         predictor.set_local(True)
         predictor.set_inputs(input_data)
         u_id = time.strftime("%Y%m%d%H%M%S")
@@ -33,7 +31,7 @@ class MLTests(TestCase):
         registry = MLRegistry()
         self.assertEqual(len(registry.endpoints), 0)
         endpoint_name = "spineyolo"
-        algorithm_object = SpineDetector(MODEL_PATH, WEIGHTS_PATH)
+        algorithm_object = SpineDetector(MODEL_PATH, WEIGHTS_PATH, STATIC_ROOT)
         algorithm_name = "yolov3"
         algorithm_status = "production"
         algorithm_version = "0.0.1"
