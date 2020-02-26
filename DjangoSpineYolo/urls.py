@@ -18,6 +18,7 @@ from django.urls import path, include
 
 from spineyolo import views as spineyolo_views
 from registration import views as registration_views
+from endpoints.urls import urlpatterns as endpoints_urlpatterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,3 +28,5 @@ urlpatterns = [
     path('', registration_views.index, name="index"),
     path('logout/', registration_views.logout, name='logout'),
 ]
+
+urlpatterns += endpoints_urlpatterns
