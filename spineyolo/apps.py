@@ -22,10 +22,10 @@ class SpineyoloConfig(AppConfig):
     print(MODEL_PATH.absolute())
     print(WEIGHTS_PATH.absolute())
     print(STATIC_ROOT.absolute())
-    # predictor = "test_prediction"
-    predictor = SpineDetector(MODEL_PATH, WEIGHTS_PATH)
-    predictor.set_root_dir(STATIC_ROOT.as_posix())
-    predictor.start()
+    predictor = "test_prediction"
+    # predictor = SpineDetector(MODEL_PATH, WEIGHTS_PATH)
+    # predictor.set_root_dir(STATIC_ROOT.as_posix())
+    # predictor.start()
     #
     # pusher_dict = load_pusher_info()
     # pusher = Pusher(
