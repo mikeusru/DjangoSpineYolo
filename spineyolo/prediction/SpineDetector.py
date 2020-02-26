@@ -169,7 +169,7 @@ class SpineDetector(Thread):
         image = Image.fromarray(
             (np.array(image).astype(np.float) / np.array(image).max() * 255).astype(np.uint8)).convert("L").convert(
             "RGB")
-        font = ImageFont.truetype(font='font/FiraMono-Medium.otf',
+        font = ImageFont.truetype(font='static/font/FiraMono-Medium.otf',
                                   size=max(np.floor(2e-2 * image.size[1] + 0.5).astype('int32'), 12))
         thickness = max((image.size[0] + image.size[1]) // 1800, 1)
         colors = [(255, 0, 0)]
