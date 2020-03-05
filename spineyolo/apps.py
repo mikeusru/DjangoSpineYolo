@@ -1,7 +1,6 @@
 import ast
 from pathlib import Path
 
-from pusher import Pusher
 from django.apps import AppConfig
 
 from spineyolo.prediction.SpineDetector import SpineDetector
@@ -22,15 +21,3 @@ class SpineyoloConfig(AppConfig):
     print(MODEL_PATH.absolute())
     print(WEIGHTS_PATH.absolute())
     print(STATIC_ROOT.absolute())
-    predictor = "test_prediction"
-    # predictor = SpineDetector(MODEL_PATH, WEIGHTS_PATH)
-    # predictor.set_root_dir(STATIC_ROOT.as_posix())
-    # predictor.start()
-    #
-    # pusher_dict = load_pusher_info()
-    # pusher = Pusher(
-    #     app_id=pusher_dict['app_id'],
-    #     key=pusher_dict['key'],
-    #     secret=pusher_dict['secret'],
-    #     cluster=pusher_dict['cluster'],
-    #     ssl=True)

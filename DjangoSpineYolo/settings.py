@@ -41,7 +41,10 @@ INSTALLED_APPS = [
     'spineyolo',
     'registration',
     'endpoints',
+    'crispy_forms',
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -123,3 +126,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static")
+    ]
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'tmp/media/')
+MEDIA_URL = '/media/'
