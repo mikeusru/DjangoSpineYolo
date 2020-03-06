@@ -9,26 +9,28 @@
 {% block content %}
     {% load static %}
 
+    <div class="jumbotron">
+        <h2>Welcome to the SpineYOLOnline!</h2>
+        {% if user.is_authenticated %}
+            <h5>Hello {{ user.username }}</h5>
+        {% else %}
+            <h5>Please
+                <a href="{% url "registration:user_login" %}">login</a>
+                or
+                <a href="{% url 'registration:register' %}">register</a> to test the tool</h5>
+        {% endif %}
+    </div>
     <div class="container">
-        <div class="jumbotron">
-            <h2>Welcome to the SpineYOLOnline!</h2>
-            {% if user.is_authenticated %}
-                <h5>Hello {{ user.username }}</h5>
-            {% else %}
-                <h5>Please
-                    <a href="{% url "registration:user_login" %}">login</a>
-                    or
-                    <a href="{% url 'registration:register' %}">register</a> to test the tool</h5>
-            {% endif %}
+        <div class="row">
+            {% block upload_image %}
+
+            {% endblock %}
+
+            <div class="col-md-4 order-md-2 mb-4">
+                <img src="{% static "images/front_page_example.jpg" %}"
+                     alt="Sample Image" float="right">
+            </div>
         </div>
-
-        {% block upload_image %}
-
-        {% endblock %}
-
-
-        <p><img src="{% static "images/front_page_example.jpg" %}"
-                alt="Sample Image" float="right"></p>
         <div class="'ml-container">
 
 
@@ -56,10 +58,9 @@
             <br>
             <br>
 
-
         </div>
-
     </div>
+
 {% endblock %}
 </body>
 </html>
