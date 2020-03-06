@@ -23,6 +23,7 @@ class ImageListView(ListView):
     model = SpineData
     template_name = 'spineyolo/image_list.html'
     context_object_name = 'images'
+    ordering = ['-date_uploaded']
 
 
 class UploadImageView(CreateView):
