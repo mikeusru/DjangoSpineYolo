@@ -1,10 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    <h2>Images</h2>
+    {% block content_header %}
 
-    <p><a href="{% url 'spineyolo:upload_image' %}" class="btn btn-primary ">Upload Image</a></p>
-
+    {% endblock %}
 
 
     <table class="table">

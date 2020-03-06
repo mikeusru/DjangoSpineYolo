@@ -19,20 +19,16 @@ class CallModel(APIView):
             return HttpResponse(response)
 
 
-def index(request):
-    return render(request, "registration/index.html")
-
-
 class ImageListView(ListView):
     model = SpineData
-    template_name = 'spineyolo/class_image_list.html'
+    template_name = 'spineyolo/image_list.html'
     context_object_name = 'images'
 
 
 class UploadImageView(CreateView):
     model = SpineData
     form_class = ImageForm
-    success_url = reverse_lazy('class_image_list')
+    success_url = reverse_lazy('spineyolo:image_list')
     template_name = 'spineyolo/upload_image.html'
 
     def form_valid(self, form):
