@@ -14,11 +14,3 @@ class SignUpForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('username', 'password1', 'password2', 'first_name', 'last_name', 'email', 'organization')
-#
-#
-# class UserProfileInfoForm(forms.ModelForm):
-#     institute = forms.CharField(max_length=255)
-#
-#     class Meta:
-#         model = UserProfileInfo
-#         fields = ('institute',)
