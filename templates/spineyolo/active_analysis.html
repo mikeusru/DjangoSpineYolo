@@ -1,0 +1,26 @@
+{% extends 'spineyolo/image_list.html' %}
+{% block content_header %}
+    {% load static %}
+    <h2> Current Analysis </h2>
+    <h5>Progress:</h5>
+    <div class="progress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+             aria-valuenow="75"
+             aria-valuemin="0" aria-valuemax="100" style="width: 75%"> Progress
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <br>
+            <img src="{% static "images/front_page_example.jpg" %}">
+            <br>
+        </div>
+        <div class="col">
+            <br>
+            <h5>Coordinates: X Y Z, Score</h5>
+        </div>
+    </div>
+    <br>
+    <br>
+
+{% endblock %}

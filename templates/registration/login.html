@@ -12,7 +12,7 @@
     <div class="container">
         <div class="jumbotron">
             <h1>Login here :</h1>
-            <form method="post" action="{% url 'registration:user_login' %}">
+            <form class="form-signin" method="post" action="{% url 'registration:user_login' %}">
                 {% csrf_token %}
                 {{ form|crispy }}
                 <input type="submit" class="btn btn-primary" value="Login">

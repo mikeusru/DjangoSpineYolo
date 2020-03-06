@@ -26,7 +26,8 @@ STATIC_ROOT = Path("static/")
 try:
     registry = MLRegistry()  # create ML registry
     # SpineYolo
-    sy = SpineDetector(MODEL_PATH, WEIGHTS_PATH, STATIC_ROOT)
+    # sy = SpineDetector(MODEL_PATH, WEIGHTS_PATH, STATIC_ROOT)
+    sy = 'test'
     # add to ML registry
     registry.add_algorithm(endpoint_name="spine_finder",
                            algorithm_object=sy,

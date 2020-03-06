@@ -21,3 +21,5 @@ class SpineyoloConfig(AppConfig):
     print(MODEL_PATH.absolute())
     print(WEIGHTS_PATH.absolute())
     print(STATIC_ROOT.absolute())
+    spine_detector = 'test'
+    # spine_detector = SpineDetector(MODEL_PATH, WEIGHTS_PATH, STATIC_ROOT)

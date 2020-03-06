@@ -1,51 +1,54 @@
 {% extends 'base.html' %}
 {% block content %}
-
-    <h2>Analysis History</h2>
-
-    <p><a href="{% url 'spineyolo:upload_image' %}" class="btn btn-primary ">Analyze New Image</a></p>
+    <div class="content">
+        {% block content_header %}
 
 
+        {% endblock %}
 
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Time Added</th>
-            <th>Scale</th>
-            <th>Uploaded Image</th>
-            <th>Analyzed Image</th>
-            <th>Coordinates File</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for image in images %}
+        <h2>Analysis History</h2>
+
+        <p><a href="{% url 'spineyolo:upload_image' %}" class="btn btn-primary ">Analyze New Image</a></p>
+
+        <table class="table">
+            <thead>
             <tr>
-                <td>{{ image.date_uploaded|date:'Y-m-d H:i' }}</td>
-                <td>{{ image.scale }}</td>
-
-                <td>
-                    <img src="{{ image.image.url }}" alt="{{ image.image.name }}" style="max-width:256px;">
-                </td>
-                <td>
-                    {% if image.analysed_image %}
-                        <img src="{{ image.analysed_image.url }}" alt="{{ image.analysed_image.name }}"
-                             style="max-width:256px;">
-                    {% else %}
-                        N/A
-                    {% endif %}
-                </td>
-                <td>
-                    {% if image.spine_coordinates_file %}
-                        <a href="{{ image.spine_coordinates_file.url }}" class="btn btn-primary btn-sm">
-                            Download Coordinates</a>
-                    {% else %}
-                        N/A
-                    {% endif %}
-
-                </td>
+                <th>Time Added</th>
+                <th>Scale</th>
+                <th>Uploaded Image</th>
+                <th>Analyzed Image</th>
+                <th>Coordinates File</th>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for image in images %}
+                <tr>
+                    <td>{{ image.date_uploaded|date:'Y-m-d H:i' }}</td>
+                    <td>{{ image.scale }}</td>
 
+                    <td>
+                        <img src="{{ image.image.url }}" alt="{{ image.image.name }}" style="max-width:256px;">
+                    </td>
+                    <td>
+                        {% if image.analysed_image %}
+                            <img src="{{ image.analysed_image.url }}" alt="{{ image.analysed_image.name }}"
+                                 style="max-width:256px;">
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if image.spine_coordinates_file %}
+                            <a href="{{ image.spine_coordinates_file.url }}" class="btn btn-primary btn-sm">
+                                Download Coordinates</a>
+                        {% else %}
+                            N/A
+                        {% endif %}
+
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
