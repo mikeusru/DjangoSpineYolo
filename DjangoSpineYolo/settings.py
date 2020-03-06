@@ -42,7 +42,10 @@ INSTALLED_APPS = [
     'registration',
     'endpoints',
     'crispy_forms',
+    'channels'
 ]
+
+ASGI_APPLICATION = 'DjangoSpineYolo.routing.application'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 

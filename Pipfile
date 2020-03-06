@@ -15,6 +15,7 @@ tensorflow = "==1.6.0"
 pusher = "*"
 keras = "==2.2.5"
 django-crispy-forms = "*"
+channels = "*"
 
 [requires]
 python_version = "3.6"

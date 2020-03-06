@@ -1,6 +1,33 @@
 {% extends 'spineyolo/image_list.html' %}
 {% block content_header %}
     {% load static %}
+
+
+    <script>
+
+        var pk = "{{ pk }}";
+
+        var chatSocket = new WebSocket(
+            'ws://' + window.location.host +
+            '/ws/spineyolo/images/analyze_image/' + pk + '/');
+
+        chatSocket.onmessage = function (e) {
+            var data = JSON.parse(e.data);
+            var message = data['message'];
+            document.querySelector('#analysis-log').value += (message + '\n');
+        };
+
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+
+
+
+
+    </script>
+
+
     <h2> Current Analysis </h2>
     <h5>Progress:</h5>
     <div class="progress">
