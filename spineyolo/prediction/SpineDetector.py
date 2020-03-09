@@ -11,6 +11,7 @@ from skimage import transform
 
 from spineyolo.model.model import yolo_eval
 from spineyolo.model.utils import letterbox_image, pad_image, calc_iou, load_tiff_stack, _max_projection_from_list
+from spineyolo.prediction.FrontEndUpdater import FrontEndUpdater
 
 
 class PusherPlaceholder():
@@ -33,7 +34,7 @@ class SpineDetector(Thread):
         self.model = self._load_model()
         self.sess = K.get_session()
         self.boxes, self.scores, self.classes = self._generate_output_tensors()
-        self.pusher = PusherPlaceholder()
+        self.front_end_updater = None
         self.image_path = None
         self.scale = 10
         self.root_dir = None
@@ -45,14 +46,14 @@ class SpineDetector(Thread):
         self.set_root_dir(static_path.as_posix())
         self.start()
 
+    def set_front_end_pk(self, pk):
+        if not self.front_end_updater:
+            self.front_end_updater = FrontEndUpdater(pk)
+        else:
+            self.front_end_updater.pk = pk
+
     def set_local(self, local=True):
         self.local = local
-
-    def _get_pusher_channel(self, channel_prefix, u_id):
-        return str(channel_prefix + u_id)
-
-    def set_pusher(self, pusher):
-        self.pusher = pusher
 
     def set_root_dir(self, root_dir):
         self.root_dir = root_dir
@@ -113,10 +114,12 @@ class SpineDetector(Thread):
         total_windows = len(window_list)
         for i, window in enumerate(window_list):
             progress = int((i + 1) / total_windows * 100)
-            self.pusher.trigger(self._get_pusher_channel('progress', u_id), u'update', {
-                u'message': 'Analyzing Zone {} of {}'.format(i + 1, total_windows),
-                u'progress': progress
-            })
+            print('progress: {}'.format(progress))
+            self.front_end_updater.update_progress(progress)
+            # self.pusher.trigger(self._get_pusher_channel('progress', u_id), u'update', {
+            #     u'message': 'Analyzing Zone {} of {}'.format(i + 1, total_windows),
+            #     u'progress': progress
+            # })
             image_cut = image[window['r']:window['r_max'], window['c']:window['c_max']]
             image_data, window_scale = self._preprocess_window(image_cut)
             # TODO: Should I run this on batch images because there's a batch dimension?
@@ -249,23 +252,26 @@ class SpineDetector(Thread):
                 draw_frames = True
             image_max = _max_projection_from_list(image_list)
             r_image = self._draw_output_image(image_max, boxes_scores_frames, draw_frames)
-            self.pusher.trigger(self._get_pusher_channel('message', u_id), u'send', {
-                u'name': 'thread poster',
-                u'message': 'Spines found!'
-            })
+            # self.pusher.trigger(self._get_pusher_channel('message', u_id), u'send', {
+            #     u'name': 'thread poster',
+            #     u'message': 'Spines found!'
+            # })
+            self.front_end_updater.analysis_done()
+            self.front_end_updater.post_message("Spines Found!")
             self.save_results(r_image, boxes_scores_frames, u_id)
         else:
             self._update_local(u_id, np.array([]))
-            self.pusher.trigger(self._get_pusher_channel('message', u_id), u'send', {
-                u'name': 'SY',
-                u'message': 'No Spines Found... :('
-            })
-            self.pusher.trigger(self._get_pusher_channel('spine_results', u_id), u'add', {
-                u'size': self.original_image_size,
-                u'scale': str(self.scale),
-                u'count': 0,
-                u'boxes_file': "#"
-            })
+            # self.pusher.trigger(self._get_pusher_channel('message', u_id), u'send', {
+            #     u'name': 'SY',
+            #     u'message': 'No Spines Found... :('
+            # })
+            self.front_end_updater.post_message("No Spines Found... :(")
+            # self.pusher.trigger(self._get_pusher_channel('spine_results', u_id), u'add', {
+            #     u'size': self.original_image_size,
+            #     u'scale': str(self.scale),
+            #     u'count': 0,
+            #     u'boxes_file': "#"
+            # })
 
         # return r_image, boxes_scores_frames
 
@@ -285,17 +291,17 @@ class SpineDetector(Thread):
         boxes_path_full = os.path.join(self.root_dir, boxes_path_relative)
         np.savetxt(boxes_path_full, boxes, delimiter=',')
         # image_path_absolute = os.path.join(self.root_dir, image_path_full)
-        self.pusher.trigger(self._get_pusher_channel('image', u_id), u'send', {
-            u'name': 'thread poster',
-            u'image_link': 'static/' + img_path_relative
-        })
-        self.pusher.trigger(self._get_pusher_channel('spine_results', u_id), u'add', {
-            u'size': self.original_image_size,
-            u'scale': str(self.scale),
-            u'count': str(len(boxes)),
-            u'boxes_file': 'static/' + boxes_path_relative
-        })
-        # return img_path_relative, boxes_path_relative
+        # self.pusher.trigger(self._get_pusher_channel('image', u_id), u'send', {
+        #     u'name': 'thread poster',
+        #     u'image_link': 'static/' + img_path_relative
+        # })
+        # self.pusher.trigger(self._get_pusher_channel('spine_results', u_id), u'add', {
+        #     u'size': self.original_image_size,
+        #     u'scale': str(self.scale),
+        #     u'count': str(len(boxes)),
+        #     u'boxes_file': 'static/' + boxes_path_relative
+        # })
+        # # return img_path_relative, boxes_path_relative
 
     def run(self):
         while True:

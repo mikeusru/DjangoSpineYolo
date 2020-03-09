@@ -5,13 +5,34 @@
 
     <p>test chat area</p>
 
-    <body>
     <textarea id="analysis-log" cols="100" rows="20"></textarea><br/>
     <input id="analysis-message-input" type="text" size="100"/><br/>
     <input id="analysis-message-submit" type="button" value="Send"/>
 
     <p>test chat area end</p>
-    </body>
+
+    <h2> Current Analysis </h2>
+    <h5>Progress:</h5>
+    <div class="progress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+             id="progress-bar"
+             aria-valuenow="0"
+             aria-valuemin="0" aria-valuemax="100" style="width: 0%"> Progress
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <br>
+            <img src="{% static "images/front_page_example.jpg" %}">
+            <br>
+        </div>
+        <div class="col">
+            <br>
+            <h5>Coordinates: X Y Z, Score</h5>
+        </div>
+    </div>
+    <br>
+    <br>
 
 
     <script>
@@ -23,10 +44,17 @@
             '/ws/spineyolo/images/analyze/' + pk + '/');
 
         chatSocket.onmessage = function (e) {
-            var data = JSON.parse(e.data);
-            var message = data['message'];
-            document.querySelector('#analysis-log').value += (message + '\n');
+            const data = JSON.parse(e.data);
+            if (data['message'] != null) {
+                const message = data['message'];
+                document.querySelector('#analysis-log').value += (message + '\n');
+            } else if (data['progress'] != null) {
+                const progress = data['progress'];
+                document.querySelector('#analysis-log').value += (progress + ' is the progress\n');
+                document.querySelector('#progress-bar').style.width = (progress + '%');
+            }
         };
+
 
         chatSocket.onclose = function (e) {
             console.error('Analysis socket closed unexpectedly');
@@ -53,26 +81,8 @@
     </script>
 
 
-    <h2> Current Analysis </h2>
-    <h5>Progress:</h5>
-    <div class="progress">
-        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-             aria-valuenow="75"
-             aria-valuemin="0" aria-valuemax="100" style="width: 75%"> Progress
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <br>
-            <img src="{% static "images/front_page_example.jpg" %}">
-            <br>
-        </div>
-        <div class="col">
-            <br>
-            <h5>Coordinates: X Y Z, Score</h5>
-        </div>
-    </div>
-    <br>
-    <br>
+
+
+
 
 {% endblock %}

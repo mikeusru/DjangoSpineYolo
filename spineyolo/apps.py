@@ -3,9 +3,13 @@ import threading
 import time
 from pathlib import Path
 
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.apps import AppConfig
 
 from spineyolo.prediction.SpineDetector import SpineDetector
+
+channel_layer = get_channel_layer()
 
 
 def load_pusher_info():
@@ -18,6 +22,18 @@ def load_pusher_info():
 def slow_response_function():
     time.sleep(3)
     print('slow function done')
+    send_a_message()
+
+
+def send_a_message():
+    pk = 85
+    pk_group_name = "analysis_%s" % pk
+    async_to_sync(channel_layer.group_send)(
+        pk_group_name,
+        {
+            'type': 'analysis_message',
+            'message': 'this is a delayed message from apps.py!'
+        })
 
 
 def test_slow_responder():
@@ -33,6 +49,6 @@ class SpineyoloConfig(AppConfig):
     print(MODEL_PATH.absolute())
     print(WEIGHTS_PATH.absolute())
     print(STATIC_ROOT.absolute())
-    spine_detector = test_slow_responder
+    # spine_detector = test_slow_responder
+    spine_detector = SpineDetector(MODEL_PATH, WEIGHTS_PATH, STATIC_ROOT)
 
-    # spine_detector = SpineDetector(MODEL_PATH, WEIGHTS_PATH, STATIC_ROOT)

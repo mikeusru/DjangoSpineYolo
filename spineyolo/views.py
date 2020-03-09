@@ -58,17 +58,18 @@ class AnalyzeImageView(ImageListView):
         print("The user is {}!".format(request.user))
         print("link = {}, scale = {}".format(input_data['image_path'], object.scale))
         predictor = SpineyoloConfig.spine_detector
-        predictor() # testing slow responder
+        predictor.set_front_end_pk(pk)
+        # predictor()  # testing slow responder
         # predictor.set_local(True)
-        # predictor.set_inputs(input_data)
+        predictor.set_inputs(input_data)
         # u_id = time.strftime("%Y%m%d%H%M%S")
-        # predictor.queue.put(["find_spines", u_id])
+        # uid was put in the queue before. this may work better to avoid errors... we'll see. ok maybe it should report both pk and username so it's only showing the latest info.
+        predictor.queue.put(["find_spines", pk])
         # return super(AnalyzeImageView, self).get(request)
         self.object_list = self.get_queryset()
         context = self.get_context_data()
-        context['pk'] = pk # pk is in the template now
+        context['pk'] = pk  # pk is in the template now
         return self.render_to_response(context)
-
 
 
 class UploadImageView(CreateView):
