@@ -16,6 +16,7 @@ pusher = "*"
 keras = "==2.2.5"
 django-crispy-forms = "*"
 channels = "*"
+channels-redis = "*"
 
 [requires]
 python_version = "3.6"

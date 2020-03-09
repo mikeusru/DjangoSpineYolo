@@ -3,13 +3,24 @@
     {% load static %}
 
 
+    <p>test chat area</p>
+
+    <body>
+    <textarea id="analysis-log" cols="100" rows="20"></textarea><br/>
+    <input id="analysis-message-input" type="text" size="100"/><br/>
+    <input id="analysis-message-submit" type="button" value="Send"/>
+
+    <p>test chat area end</p>
+    </body>
+
+
     <script>
 
         var pk = "{{ pk }}";
 
         var chatSocket = new WebSocket(
             'ws://' + window.location.host +
-            '/ws/spineyolo/images/analyze_image/' + pk + '/');
+            '/ws/spineyolo/images/analyze/' + pk + '/');
 
         chatSocket.onmessage = function (e) {
             var data = JSON.parse(e.data);
@@ -17,13 +28,27 @@
             document.querySelector('#analysis-log').value += (message + '\n');
         };
 
-        chatSocket.onclose = function(e) {
-            console.error('Chat socket closed unexpectedly');
+        chatSocket.onclose = function (e) {
+            console.error('Analysis socket closed unexpectedly');
         };
 
 
+        document.querySelector('#analysis-message-input').focus();
+        document.querySelector('#analysis-message-input').onkeyup = function (e) {
+            if (e.keyCode === 13) {  // enter, return
+                document.querySelector('#analysis-message-submit').click();
+            }
+        };
 
+        document.querySelector('#analysis-message-submit').onclick = function (e) {
+            var messageInputDom = document.querySelector('#analysis-message-input');
+            var message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
 
+            messageInputDom.value = '';
+        };
 
     </script>
 
