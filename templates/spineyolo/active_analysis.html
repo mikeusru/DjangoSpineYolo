@@ -1,4 +1,12 @@
 {% extends 'spineyolo/image_list.html' %}
+{% block latest_image %}
+    <img id="analyzed-image-preview" src="" style="max-width:512px;">
+{% endblock %}
+
+{% block latest_coordinates %}
+    <a href="" class="btn btn-primary btn-md disabled" id="csv-button">Download Spine Coordinates</a>
+{% endblock %}
+
 {% block content_header %}
     {% load static %}
 
@@ -9,18 +17,6 @@
              id="progress-bar"
              aria-valuenow="0"
              aria-valuemin="0" aria-valuemax="100" style="width: 0%"> Progress
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <br>
-            <img id = "analyzed-image-preview" src="">
-            <br>
-        </div>
-        <div class="col">
-            <br>
-            <a href="" class="btn btn-primary btn-md disabled" id="csv-button">
-                Download Spine Coordinates File</a>
         </div>
     </div>
     <br>
@@ -39,13 +35,13 @@
             const data = JSON.parse(e.data);
             if (data['message'] != null) {
                 const message = data['message'];
-                console.log(message)
+                console.log(message);
                 {#document.querySelector('#analysis-log').value += (message + '\n');#}
             } else if (data['progress'] != null) {
                 const progress = data['progress'];
                 {#document.querySelector('#analysis-log').value += (progress + ' is the progress\n');#}
                 document.querySelector('#progress-bar').style.width = (progress + '%');
-            }else if (data['finished'] != null) {
+            } else if (data['finished'] != null) {
                 console.log(data['finished']);
                 console.log('it is finished now what?');
                 document.querySelector('#csv-button').className = "btn btn-primary btn-md";
@@ -54,18 +50,9 @@
             }
         };
 
-
         chatSocket.onclose = function (e) {
             console.error('Analysis socket closed unexpectedly');
         };
-
-
-
     </script>
-
-
-
-
-
 
 {% endblock %}

@@ -2,7 +2,7 @@
 {% block content %}
     <div class="content">
         {% block content_header %}
-        <p><a href="{% url 'spineyolo:upload_image' %}" class="btn btn-primary ">Analyze New Image</a></p>
+            <p><a href="{% url 'spineyolo:upload_image' %}" class="btn btn-primary ">Analyze New Image</a></p>
 
 
         {% endblock %}
@@ -25,26 +25,45 @@
                 <tr>
                     <td>{{ image.date_uploaded|date:'Y-m-d H:i' }}</td>
                     <td>{{ image.scale }}</td>
+                    <td>
+                        {% if image.image_preview %}
 
-                    <td>
-                        <img src="{{ image.image.url }}" alt="{{ image.image.name }}" style="max-width:256px;">
-                    </td>
-                    <td>
-                        {% if image.analyzed_image %}
-                            <img src="{{ image.analyzed_image.url }}" alt="{{ image.analyzed_image.name }}"
+                            <img src="{{ image.image_preview.url }}" alt="{{ image.image_preview.name }}"
                                  style="max-width:256px;">
                         {% else %}
                             N/A
                         {% endif %}
                     </td>
                     <td>
-                        {% if image.spine_coordinates_file %}
-                            <a href="{{ image.spine_coordinates_file.url }}" class="btn btn-primary btn-sm">
-                                Download Coordinates</a>
+                        {% if forloop.counter0 is 0 %}
+                            {% block latest_image %}
+                                <img src="{{ image.analyzed_image.url }}" alt="{{ image.analyzed_image.name }}"
+                                     style="max-width:256px;">
+                            {% endblock %}
                         {% else %}
-                            N/A
+                            {% if image.analyzed_image %}
+                                <img src="{{ image.analyzed_image.url }}" alt="{{ image.analyzed_image.name }}"
+                                     style="max-width:256px;">
+                            {% else %}
+                                N/A
+                            {% endif %}
                         {% endif %}
 
+                    </td>
+                    <td>
+                        {% if forloop.counter0 is 0 %}
+                            {% block latest_coordinates %}
+                                <a href="{{ image.spine_coordinates_file.url }}" class="btn btn-primary btn-sm">
+                                    Download Coordinates</a>
+                            {% endblock %}
+                        {% else %}
+                            {% if image.spine_coordinates_file %}
+                                <a href="{{ image.spine_coordinates_file.url }}" class="btn btn-primary btn-sm">
+                                    Download Coordinates</a>
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}
