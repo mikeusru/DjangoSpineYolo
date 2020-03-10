@@ -2,15 +2,6 @@
 {% block content_header %}
     {% load static %}
 
-
-    <p>test chat area</p>
-
-    <textarea id="analysis-log" cols="100" rows="20"></textarea><br/>
-    <input id="analysis-message-input" type="text" size="100"/><br/>
-    <input id="analysis-message-submit" type="button" value="Send"/>
-
-    <p>test chat area end</p>
-
     <h2> Current Analysis </h2>
     <h5>Progress:</h5>
     <div class="progress">
@@ -23,12 +14,13 @@
     <div class="row">
         <div class="col">
             <br>
-            <img src="{% static "images/front_page_example.jpg" %}">
+            <img id = "analyzed-image-preview" src="">
             <br>
         </div>
         <div class="col">
             <br>
-            <h5>Coordinates: X Y Z, Score</h5>
+            <a href="" class="btn btn-primary btn-md disabled" id="csv-button">
+                Download Spine Coordinates File</a>
         </div>
     </div>
     <br>
@@ -47,11 +39,18 @@
             const data = JSON.parse(e.data);
             if (data['message'] != null) {
                 const message = data['message'];
-                document.querySelector('#analysis-log').value += (message + '\n');
+                console.log(message)
+                {#document.querySelector('#analysis-log').value += (message + '\n');#}
             } else if (data['progress'] != null) {
                 const progress = data['progress'];
-                document.querySelector('#analysis-log').value += (progress + ' is the progress\n');
+                {#document.querySelector('#analysis-log').value += (progress + ' is the progress\n');#}
                 document.querySelector('#progress-bar').style.width = (progress + '%');
+            }else if (data['finished'] != null) {
+                console.log(data['finished']);
+                console.log('it is finished now what?');
+                document.querySelector('#csv-button').className = "btn btn-primary btn-md";
+                document.querySelector('#csv-button').setAttribute("href", data["spine_coordinates_url"]);
+                document.querySelector('#analyzed-image-preview').setAttribute("src", data["analyzed_image_url"])
             }
         };
 
@@ -61,22 +60,6 @@
         };
 
 
-        document.querySelector('#analysis-message-input').focus();
-        document.querySelector('#analysis-message-input').onkeyup = function (e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#analysis-message-submit').click();
-            }
-        };
-
-        document.querySelector('#analysis-message-submit').onclick = function (e) {
-            var messageInputDom = document.querySelector('#analysis-message-input');
-            var message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-                'message': message
-            }));
-
-            messageInputDom.value = '';
-        };
 
     </script>
 

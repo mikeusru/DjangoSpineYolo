@@ -1,6 +1,8 @@
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
+from spineyolo.models import get_coordinates_url, get_analyzed_image_url
+
 channel_layer = get_channel_layer()
 
 
@@ -19,6 +21,7 @@ class FrontEndUpdater:
     def analysis_done(self):
         self.update_progress(100)
         self.__send_a_message("Analysis Done")
+        self.__send_finished()
 
     def __send_a_message(self, message):
         pk_group_name = "analysis_%s" % self.pk
@@ -36,4 +39,17 @@ class FrontEndUpdater:
             {
                 'type': 'progress_percent',
                 'progress': progress
+            })
+
+    def __send_finished(self):
+        pk_group_name = "analysis_%s" % self.pk
+        spine_coordinates_url = get_coordinates_url(self.pk)
+        analyzed_image_url = get_analyzed_image_url(self.pk)
+        async_to_sync(channel_layer.group_send)(
+            pk_group_name,
+            {
+                'type': 'finished_message',
+                'finished': "finished",
+                'spine_coordinates_url': spine_coordinates_url,
+                'analyzed_image_url': analyzed_image_url,
             })

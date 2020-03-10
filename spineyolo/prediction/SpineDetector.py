@@ -11,6 +11,7 @@ from skimage import transform
 
 from spineyolo.model.model import yolo_eval
 from spineyolo.model.utils import letterbox_image, pad_image, calc_iou, load_tiff_stack, _max_projection_from_list
+from spineyolo.models import add_analyzed_image, add_spine_coordinates
 from spineyolo.prediction.FrontEndUpdater import FrontEndUpdater
 
 
@@ -252,28 +253,13 @@ class SpineDetector(Thread):
                 draw_frames = True
             image_max = _max_projection_from_list(image_list)
             r_image = self._draw_output_image(image_max, boxes_scores_frames, draw_frames)
-            # self.pusher.trigger(self._get_pusher_channel('message', u_id), u'send', {
-            #     u'name': 'thread poster',
-            #     u'message': 'Spines found!'
-            # })
-            self.front_end_updater.analysis_done()
+
             self.front_end_updater.post_message("Spines Found!")
             self.save_results(r_image, boxes_scores_frames, u_id)
         else:
             self._update_local(u_id, np.array([]))
-            # self.pusher.trigger(self._get_pusher_channel('message', u_id), u'send', {
-            #     u'name': 'SY',
-            #     u'message': 'No Spines Found... :('
-            # })
             self.front_end_updater.post_message("No Spines Found... :(")
-            # self.pusher.trigger(self._get_pusher_channel('spine_results', u_id), u'add', {
-            #     u'size': self.original_image_size,
-            #     u'scale': str(self.scale),
-            #     u'count': 0,
-            #     u'boxes_file': "#"
-            # })
 
-        # return r_image, boxes_scores_frames
 
     def _update_local(self, u_id, results):
         if self.local:
@@ -287,21 +273,12 @@ class SpineDetector(Thread):
         img_path_relative = os.path.join(sub_path, 'r_img' + timestr + '.jpg')
         image_path_full = os.path.join(self.root_dir, img_path_relative)
         image.save(image_path_full)
+        add_analyzed_image(self.front_end_updater.pk, image_path_full)
         boxes_path_relative = os.path.join(sub_path, 'r_boxes' + timestr + '.csv')
         boxes_path_full = os.path.join(self.root_dir, boxes_path_relative)
         np.savetxt(boxes_path_full, boxes, delimiter=',')
-        # image_path_absolute = os.path.join(self.root_dir, image_path_full)
-        # self.pusher.trigger(self._get_pusher_channel('image', u_id), u'send', {
-        #     u'name': 'thread poster',
-        #     u'image_link': 'static/' + img_path_relative
-        # })
-        # self.pusher.trigger(self._get_pusher_channel('spine_results', u_id), u'add', {
-        #     u'size': self.original_image_size,
-        #     u'scale': str(self.scale),
-        #     u'count': str(len(boxes)),
-        #     u'boxes_file': 'static/' + boxes_path_relative
-        # })
-        # # return img_path_relative, boxes_path_relative
+        add_spine_coordinates(self.front_end_updater.pk, boxes_path_full)
+        self.front_end_updater.analysis_done()
 
     def run(self):
         while True:

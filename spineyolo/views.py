@@ -3,6 +3,7 @@ import os
 import time
 from pathlib import Path
 
+from django import template
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -19,6 +20,8 @@ from endpoints.models import MLAlgorithm, MLRequest
 from spineyolo.apps import SpineyoloConfig
 from spineyolo.forms import ImageForm
 from spineyolo.models import SpineData
+
+
 
 
 class CallModel(APIView):

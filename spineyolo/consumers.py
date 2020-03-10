@@ -30,8 +30,10 @@ class AnalysisConsumer(AsyncJsonWebsocketConsumer):
         # try:
         if json_type == "analysis_message":
             await self.send_message(content['message'])
-        elif json_type == "progress":
+        elif json_type == "progress_percent":
             await self.send_progress(content['progress'])
+        elif json_type == "finished":
+            await self.send_progress(content['finished'])
         # except ClientError as e:
         #     await self.send_json({"error":, e.code})
 
@@ -54,6 +56,16 @@ class AnalysisConsumer(AsyncJsonWebsocketConsumer):
                 'message': message
             }
         )
+
+    async def send_finished(self, message):
+
+        await self.channel_layer.group_send(
+            self.pk_group_name,
+            {
+                'type': 'finished_message',
+                'finished': message
+            }
+        )
         
     async def progress_percent(self, event):
         progress = event['progress']
@@ -69,5 +81,18 @@ class AnalysisConsumer(AsyncJsonWebsocketConsumer):
         # send message to websocket
         await self.send_json({
             'message': message
+        })
+
+    # receive message from pk group
+    async def finished_message(self, event):
+        message = event['finished']
+        spine_coordinates_url = event['spine_coordinates_url']
+        analyzed_image_url = event['analyzed_image_url']
+
+        # send message to websocket
+        await self.send_json({
+            'finished': message,
+            'spine_coordinates_url': spine_coordinates_url,
+            'analyzed_image_url': analyzed_image_url
         })
 
