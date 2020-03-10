@@ -9,4 +9,5 @@ class ImageForm(forms.ModelForm):
 
     class Meta:
         model = SpineData
+        help_texts = {'scale': "pixels / μm"}
         fields = ('scale', 'image')
