@@ -51,4 +51,3 @@ class SpineyoloConfig(AppConfig):
     print(STATIC_ROOT.absolute())
     # spine_detector = test_slow_responder
     spine_detector = SpineDetector(MODEL_PATH, WEIGHTS_PATH, STATIC_ROOT)
-

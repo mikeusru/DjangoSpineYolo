@@ -1,15 +1,28 @@
 {% extends 'base.html' %}
+{% block header %}
+    {% load static %}
+
+    <script src="{% static 'js/image_list.js' %}"></script>
+
+{% endblock %}
 {% block content %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .fa {
+            font-size: 50px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .fa:hover {
+            color: darkblue;
+        }
+    </style>
     <div class="content">
         {% block content_header %}
             <p><a href="{% url 'spineyolo:upload_image' %}" class="btn btn-primary ">Analyze New Image</a></p>
-
-
         {% endblock %}
-
         <h2>Analysis History</h2>
-
-
         <table class="table">
             <thead>
             <tr>
@@ -18,6 +31,7 @@
                 <th>Uploaded Image</th>
                 <th>Analyzed Image</th>
                 <th>Coordinates File</th>
+                <th>Rating</th>
             </tr>
             </thead>
             <tbody>
@@ -27,7 +41,6 @@
                     <td>{{ image.scale }}</td>
                     <td>
                         {% if image.image_preview %}
-
                             <img src="{{ image.image_preview.url }}" alt="{{ image.image_preview.name }}"
                                  style="max-width:256px;">
                         {% else %}
@@ -48,7 +61,6 @@
                                 N/A
                             {% endif %}
                         {% endif %}
-
                     </td>
                     <td>
                         {% if forloop.counter0 is 0 %}
@@ -65,9 +77,39 @@
                             {% endif %}
                         {% endif %}
                     </td>
+                    <td>
+                        {% for form in ratings.forms %}
+                            "{{ form.pk }}"
+                            {% for field in form.visible_fields %}
+                                {{ field.label }}
+                            {% endfor %}
+
+                        {% endfor %}
+                        {#                        <form method="POST" id="post-form">#}
+                        {#                            {% csrf_token %}#}
+                        {#                            <div class="fieldWrapper" id="review_for_pk_{{ image.pk }}">#}
+                        {#                                {{ image.rating }}#}
+                        {#                                {{ image.pk }}#}
+                        {#                            </div>#}
+                        {#                            <div id="results"></div>#}
+                        {#                            <input type="submit" value="Rate" class="btn-primary">#}
+                        {#                        </form>#}
+                        {#                        <form action="{% url 'spineyolo:change_rating' %}" method="POST" id="rating-form">#}
+                        {#                            {% csrf_token %}#}
+                        {#                            <div class="fieldWrapper" id="pk">#}
+                        {#                                {{ image.pk }}#}
+                        {#                            </div>#}
+                        {#                            <div id="results"></div> <!-- errors go here -->#}
+                        {#                            <input type="submit" value="Post" class="tiny button">#}
+                        {#                        </form>#}
+                        {#                        <i onclick="myFunction(this, '{{ image.pk }}')"#}
+                        {#                           class="fa fa-thumbs-{{ image.rating|yesno:"up,down" }}"></i>#}
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
     </div>
+
+
 {% endblock %}

@@ -1,37 +1,33 @@
 import json
-import os
-import time
-from pathlib import Path
 
-from django import template
+from django.forms import formset_factory
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views import View
-from django.views.generic import ListView, CreateView, DetailView
-from numpy.random import rand
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.views import APIView
-import requests
+from django.views.generic import ListView, CreateView
 
-from DjangoSpineYolo.wsgi import registry
-from endpoints.models import MLAlgorithm, MLRequest
 from spineyolo.apps import SpineyoloConfig
-from spineyolo.forms import ImageForm
-from spineyolo.models import SpineData
+from spineyolo.forms import ImageForm, RatingFormSet
+from spineyolo.models import SpineData, toggle_rating
 
 
+def run_spineyolo(input_data, pk):
+    spine_detector = SpineyoloConfig.spine_detector
+    spine_detector.set_front_end_pk(pk)
+    spine_detector.set_inputs(input_data)
+    ## TODO: uid was put in the queue before. this may work better to avoid errors... we'll see. ok maybe it should report both pk and username so it's only showing the latest info.
+    spine_detector.queue.put(["find_spines", pk])
 
 
-class CallModel(APIView):
-
-    ## TODO: change this to POST, because need to post and wait for returns
-    def get(self, request):
-        if request.method == "GET":
-            params = request.GET.get('scale')
-            response = SpineyoloConfig.predictor
-            return HttpResponse(response)
+def change_rating(request):
+    if request.method == 'POST':
+        print("WE GOT SOMEWHERE")
+        pk = request.POST.get('pk')
+        print(pk)
+        rating = toggle_rating(pk)
+        return HttpResponse(json.dumps({'rating': rating,
+                                        'pk': pk}),
+                            content_type="application/json")
 
 
 class ImageListView(ListView):
@@ -39,6 +35,16 @@ class ImageListView(ListView):
     template_name = 'spineyolo/image_list.html'
     context_object_name = 'images'
     ordering = ['-date_uploaded']
+    form_class = RatingFormSet
+
+    def get_context_data(self, **kwargs):
+        data = super(ImageListView, self).get_context_data(**kwargs)
+        if self.request.POST:
+            print("POST")
+        else:
+            print("NOT A POST")
+            data['ratings'] = RatingFormSet()
+        return data
 
     def get_queryset(self):
         queryset = super(ImageListView, self).get_queryset()
@@ -50,25 +56,13 @@ class AnalyzeImageView(ImageListView):
 
     def get(self, request, **kwargs):
         pk = kwargs['pk']
-        object = self.get_queryset().get(pk=pk)
-        # path = Path('tmp') / Path(object.image.url)
+        obj = self.get_queryset().get(pk=pk)
         ## TODO: Fix the way the image path is handled
         input_data = {
-            "image_path": "tmp/{}".format(object.image.url),
-            "scale": object.scale,
+            "image_path": "tmp/{}".format(obj.image.url),
+            "scale": obj.scale,
         }
-        print("The special key is {}!".format(pk))
-        print("The user is {}!".format(request.user))
-        print("link = {}, scale = {}".format(input_data['image_path'], object.scale))
-        predictor = SpineyoloConfig.spine_detector
-        predictor.set_front_end_pk(pk)
-        # predictor()  # testing slow responder
-        # predictor.set_local(True)
-        predictor.set_inputs(input_data)
-        # u_id = time.strftime("%Y%m%d%H%M%S")
-        # uid was put in the queue before. this may work better to avoid errors... we'll see. ok maybe it should report both pk and username so it's only showing the latest info.
-        predictor.queue.put(["find_spines", pk])
-        # return super(AnalyzeImageView, self).get(request)
+        run_spineyolo(input_data, pk)
         self.object_list = self.get_queryset()
         context = self.get_context_data()
         context['pk'] = pk  # pk is in the template now
@@ -78,7 +72,6 @@ class AnalyzeImageView(ImageListView):
 class UploadImageView(CreateView):
     model = SpineData
     form_class = ImageForm
-    # success_url = reverse_lazy('spineyolo:analyze_image')
     template_name = 'spineyolo/upload_image.html'
 
     def get_success_url(self):

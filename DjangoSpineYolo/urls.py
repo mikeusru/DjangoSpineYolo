@@ -26,7 +26,6 @@ from endpoints.urls import urlpatterns as endpoints_urlpatterns
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('spineyolo/', include('spineyolo.urls')),
-    path('model/', spineyolo_views.CallModel.as_view()),
     path('registration/', include('registration.urls')),
     path('', registration_views.index, name="index"),
 ]

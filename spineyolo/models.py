@@ -18,6 +18,7 @@ class SpineData(models.Model):
     date_uploaded = models.DateTimeField(auto_now_add=True, null=True)
     spine_coordinates_file = models.FileField(upload_to="analyzed_spines/coordinates", null=True)
     analyzed_image = models.ImageField(upload_to="analyzed_spines/images", null=True)
+    rating = models.BooleanField(null=True, default=True)
 
     def __str__(self):
         return self.image.name
@@ -60,3 +61,10 @@ def get_analyzed_image_url(pk):
 def get_coordinates_url(pk):
     sd = SpineData.objects.get(pk=pk)
     return sd.spine_coordinates_file.url
+
+
+def toggle_rating(pk):
+    sd = SpineData.objects.get(pk=pk)
+    sd.rating = not sd.rating
+    sd.save()
+    return sd.rating
