@@ -35,16 +35,16 @@ class ImageListView(ListView):
     template_name = 'spineyolo/image_list.html'
     context_object_name = 'images'
     ordering = ['-date_uploaded']
-    form_class = RatingFormSet
+    # form_class = RatingFormSet
 
-    def get_context_data(self, **kwargs):
-        data = super(ImageListView, self).get_context_data(**kwargs)
-        if self.request.POST:
-            print("POST")
-        else:
-            print("NOT A POST")
-            data['ratings'] = RatingFormSet()
-        return data
+    # def get_context_data(self, **kwargs):
+    #     data = super(ImageListView, self).get_context_data(**kwargs)
+    #     if self.request.POST:
+    #         print("POST")
+    #     else:
+    #         print("NOT A POST")
+    #         data['ratings'] = RatingFormSet()
+    #     return data
 
     def get_queryset(self):
         queryset = super(ImageListView, self).get_queryset()

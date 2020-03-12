@@ -4,4 +4,5 @@ from . import consumers
 
 websocket_urlpatterns = [
     re_path(r'ws/spineyolo/images/analyze/(?P<pk>\w+)/$', consumers.AnalysisConsumer),
+    re_path(r'ws/spineyolo/images/', consumers.RatingConsumer),
 ]
